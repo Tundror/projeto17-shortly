@@ -31,3 +31,20 @@ export async function getUrlById(req, res){
     }
 }
 
+export async function openShortUrl(req, res){
+    const {shortUrl} = req.params
+
+    try{
+        const data = await db.query(`SELECT urls.url, urls."visitCount" FROM urls WHERE "shortUrl"=$1`, [shortUrl])
+        if(data.rows.length === 0) return res.status(404).send("url nao encontrada")
+
+        const visitCountPlus = data.rows[0].visitCount + 1
+
+        await db.query(`UPDATE urls SET "visitCount"=$1 WHERE "shortUrl"=$2`, [visitCountPlus, shortUrl])
+
+        const originalUrl = data.rows[0].url
+        res.redirect(originalUrl)
+    }catch(err){
+        res.status(500).json(err.message);
+    }
+}

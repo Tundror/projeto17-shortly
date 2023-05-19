@@ -4,9 +4,7 @@ import { db } from "../database/database.connection.js";
 
 export async function authValidate(req, res, next) {
     const { authorization } = req.headers
-    console.log(authorization)
     const token = authorization?.replace("Bearer ", "")
-    console.log(token)
     if (!token) return res.sendStatus(401)
 
     dotenv.config()
@@ -14,7 +12,6 @@ export async function authValidate(req, res, next) {
 
     try {
         const data = jwt.verify(token, secretKey)
-        console.log(data.id)
         if (!data) return res.status(401).send("Token invalido")
 
         const session = await db.query(`SELECT * FROM sessions WHERE "userId"=$1`, [data.id])
