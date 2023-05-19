@@ -19,3 +19,15 @@ export async function shortenUrl(req, res){
         res.status(500).json(err.message);
     }
 }
+
+export async function getUrlById(req, res){
+    const id = parseInt(req.params.id)
+    try{
+        const data = await db.query(`SELECT urls.id, urls."shortUrl", urls.url FROM urls WHERE id=$1`, [id])
+        if(data.rows.length === 0) return res.status(404).send("id nao encontrado")
+        res.status(200).send(data.rows[0])
+    }catch(err){
+        res.status(500).json(err.message);
+    }
+}
+
