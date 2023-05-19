@@ -1,18 +1,23 @@
 import dotenv from "dotenv"
+import jwt from "jsonwebtoken";
+import { db } from "../database/database.connection.js";
 
 export async function authValidate(req, res, next) {
-    const { Authorization } = req.headers
-    const token = Authorization?.replace("Bearer ", "")
+    const { authorization } = req.headers
+    console.log(authorization)
+    const token = authorization?.replace("Bearer ", "")
+    console.log(token)
     if (!token) return res.sendStatus(401)
 
     dotenv.config()
     const secretKey = process.env.SECRET_KEY
 
     try {
-        const data = await jwt.verify(token, secretKey)
+        const data = jwt.verify(token, secretKey)
+        console.log(data.id)
         if (!data) return res.status(401).send("Token invalido")
 
-        const session = await db.query(`SELECT * FROM sessions WHERE "userId=$1`, [data.id])
+        const session = await db.query(`SELECT * FROM sessions WHERE "userId"=$1`, [data.id])
         if (!session) return res.status(401).send("Sessao nao encontrada")
         res.locals.session = session
 
