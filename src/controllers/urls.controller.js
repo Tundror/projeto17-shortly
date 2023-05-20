@@ -48,3 +48,19 @@ export async function openShortUrl(req, res){
         res.status(500).json(err.message);
     }
 }
+
+export async function deleteUrl(req, res){
+    const id = parseInt(req.params.id)
+    const userId = res.locals.session.rows[0].userId
+
+    try{
+        const data = await db.query(`SELECT * FROM urls WHERE id=$1`, [id])
+        if(data.rows.length === 0) return res.status(404).send("id nao encontrado")
+        if (data.rows[0].userId !== userId) res.status(401).send("usuario nao autorizado")
+
+        await db.query(`DELETE FROM urls WHERE id=$1`, [id])
+        res.status(204).send("url excluida")
+    }catch(err){
+        res.status(500).json(err.message);
+    }
+}
