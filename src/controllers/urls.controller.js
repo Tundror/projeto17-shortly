@@ -64,3 +64,60 @@ export async function deleteUrl(req, res){
         res.status(500).json(err.message);
     }
 }
+
+export async function userUrls(req, res) {
+    const userId = res.locals.session.rows[0].userId;
+  
+    try {
+      const userData = await db.query(
+        `
+        SELECT u.id, u.name
+        FROM users u
+        WHERE u.id = $1
+        `,
+        [userId]
+      );
+  
+      if (userData.rows.length === 0) {
+        return res.status(404).send("User not found");
+      }
+  
+      const user = userData.rows[0];
+  
+      const shortenedUrlsData = await db.query(
+        `
+        SELECT url.id, url."shortUrl", url.url, url."visitCount"
+        FROM urls url
+        WHERE url."userId" = $1
+        `,
+        [userId]
+      );
+  
+      const shortenedUrls = shortenedUrlsData.rows.map(url => ({
+        id: url.id,
+        shortUrl: url.shortUrl,
+        url: url.url,
+        visitCount: url.visitCount
+      }));
+  
+      const totalVisitsData = await db.query(
+        `
+        SELECT COALESCE(SUM(url."visitCount"), 0) AS totalVisits
+        FROM urls url
+        WHERE url."userId" = $1
+        `,
+        [userId]
+      );
+  
+      const responseData = {
+        id: user.id,
+        name: user.name,
+        totalVisits: totalVisitsData.rows[0].totalvisits,
+        shortenedUrls: shortenedUrls || []
+      };
+      console.log(totalVisitsData.rows[0].totalvisits)
+      res.status(200).json(responseData);
+    } catch (err) {
+      res.status(500).json(err.message);
+    }
+  }

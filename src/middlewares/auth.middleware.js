@@ -15,7 +15,7 @@ export async function authValidate(req, res, next) {
         if (!data) return res.status(401).send("Token invalido")
 
         const session = await db.query(`SELECT * FROM sessions WHERE "userId"=$1`, [data.id])
-        if (!session) return res.status(401).send("Sessao nao encontrada")
+        if (session.rows.length === 0) return res.status(401).send("Sessao nao encontrada")
         res.locals.session = session
 
         next()
