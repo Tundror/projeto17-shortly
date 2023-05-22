@@ -36,10 +36,11 @@ export async function signIn(req, res) {
 
         const data = {id: user.rows[0].id}
         const token = jwt.sign(data, secretKey || 'mySecret')
+        console.log(token)
 
         await db.query(`INSERT INTO sessions (token, "userId") VALUES ($1, $2)`, [token, user.rows[0].id])
 
-        res.status(200).send(token)
+        res.status(200).json({token: token})
     }catch(err){
         res.status(500).json(err.message);
     }
