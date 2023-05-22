@@ -20,7 +20,7 @@ export async function authValidate(req, res, next) {
         next()
 
     } catch (err) {
-        if(err.message === "invalid signature"){
+        if(err.message === "invalid signature" || "invalid token"){
           return res.status(401).send("Token invalido")
         }
         res.status(500).json(err.message);
