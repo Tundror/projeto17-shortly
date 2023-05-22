@@ -122,11 +122,11 @@ export async function userUrls(req, res) {
 export async function urlRanking(req, res) {
     try {
         const rankingData = await db.query(`
-        SELECT u.id, u.name, COALESCE(COUNT(url.id), 0)::INTEGER AS linksCount, COALESCE(SUM(url."visitCount"), 0)::INTEGER AS visitCount
+        SELECT u.id, u.name, COALESCE(COUNT(url.id), 0)::INTEGER AS linksCount, COALESCE(SUM(url."visitCount"), 0)::INTEGER AS "visitCount"
         FROM users u
         LEFT JOIN urls url ON u.id = url."userId"
         GROUP BY u.id
-        ORDER BY visitCount DESC
+        ORDER BY "visitCount" DESC
         LIMIT 10
       `);
 
