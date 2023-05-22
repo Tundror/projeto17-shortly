@@ -12,7 +12,6 @@ export async function authValidate(req, res, next) {
 
     try {
         const data = jwt.verify(token, secretKey)
-        if (!data) return res.status(401).send("Token invalido")
 
         const session = await db.query(`SELECT * FROM sessions WHERE "userId"=$1`, [data.id])
         if (session.rows.length === 0) return res.status(401).send("Sessao nao encontrada")
@@ -21,6 +20,9 @@ export async function authValidate(req, res, next) {
         next()
 
     } catch (err) {
+        if(err.message === "invalid signature"){
+          return res.status(401).send("Token invalido")
+        }
         res.status(500).json(err.message);
     }
 }
