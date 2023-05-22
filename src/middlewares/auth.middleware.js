@@ -8,7 +8,7 @@ export async function authValidate(req, res, next) {
     if (!token) return res.sendStatus(401)
 
     dotenv.config()
-    const secretKey = process.env.SECRET_KEY
+    const secretKey = process.env.SECRET_KEY || 'mySecret'
 
     try {
         const data = jwt.verify(token, secretKey)
