@@ -8,7 +8,7 @@ export async function signUp(req, res) {
     const { name, email, password, confirmPassword } = req.body;
     const hashPassword = bcrypt.hashSync(password, 10);
 
-    if(password !== confirmPassword) res.status(400).send("Senhas diferentes")
+    if(password !== confirmPassword) res.status(422).send("Senhas diferentes")
 
     try{
         const checkUser = await db.query(`SELECT * FROM users WHERE email=$1`, [email])
