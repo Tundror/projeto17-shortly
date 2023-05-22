@@ -110,7 +110,7 @@ export async function userUrls(req, res) {
         const responseData = {
             id: user.id,
             name: user.name,
-            totalVisits: totalVisitsData.rows[0].totalvisits,
+            visitCount: totalVisitsData.rows[0].totalvisits,
             shortenedUrls: shortenedUrls || []
         };
         res.status(200).json(responseData);
