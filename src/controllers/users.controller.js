@@ -35,7 +35,7 @@ export async function signIn(req, res) {
         if (!correctPassword) return res.status(401).send("Senha incorreta")
 
         const data = {id: user.rows[0].id}
-        const token = jwt.sign(data, secretKey)
+        const token = jwt.sign(data, secretKey || 'mySecret')
 
         await db.query(`INSERT INTO sessions (token, "userId") VALUES ($1, $2)`, [token, user.rows[0].id])
 
